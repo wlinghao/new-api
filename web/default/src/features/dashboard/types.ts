@@ -33,6 +33,52 @@ export interface QuotaDataItem {
   quota?: number
 }
 
+export interface UserUsageSummaryItem {
+  user_id: number
+  username: string
+  active_days: number
+  request_count: number
+  prompt_tokens: number
+  completion_tokens: number
+  quota: number
+  first_date: number
+  last_date: number
+  avg_prompt_tokens_per_day: number
+  avg_completion_tokens_per_day: number
+  avg_quota_per_day: number
+}
+
+export interface UserUsageModelSummaryItem {
+  model_name: string
+  active_days: number
+  request_count: number
+  prompt_tokens: number
+  completion_tokens: number
+  quota: number
+  avg_prompt_tokens_per_day: number
+  avg_completion_tokens_per_day: number
+  avg_quota_per_day: number
+}
+
+export interface UserUsageSummaryResponse {
+  success: boolean
+  message?: string
+  data: {
+    page: number
+    page_size: number
+    total: number
+    items: UserUsageSummaryItem[]
+  }
+}
+
+export interface UserUsageRefreshResult {
+  processed_dates: number
+  skipped_dates: number
+  rows_written: number
+  refreshed_dates: number[]
+  skipped_date_list: number[]
+}
+
 // ============================================================================
 // Uptime Monitoring Types
 // ============================================================================

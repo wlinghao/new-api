@@ -17,7 +17,13 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { api } from '@/lib/api'
-import type { QuotaDataItem, UptimeGroupResult } from './types'
+import type {
+  QuotaDataItem,
+  UptimeGroupResult,
+  UserUsageModelSummaryItem,
+  UserUsageRefreshResult,
+  UserUsageSummaryResponse,
+} from './types'
 
 // ============================================================================
 // Dashboard APIs
@@ -67,4 +73,56 @@ export async function getUptimeStatus() {
     '/api/uptime/status'
   )
   return res.data
+}
+
+export async function getUserUsageSummary(params: {
+  start_date: string
+  end_date: string
+  username?: string
+  p?: number
+  page_size?: number
+}) {
+  const res = await api.get<UserUsageSummaryResponse>('/api/usage/summary', {
+    params,
+  })
+  return res.data
+}
+
+export async function getUserUsageModelSummary(
+  userId: number,
+  params: {
+    start_date: string
+    end_date: string
+  }
+) {
+  const res = await api.get<{
+    success: boolean
+    data: UserUsageModelSummaryItem[]
+  }>(`/api/usage/summary/users/${userId}/models`, { params })
+  return res.data
+}
+
+export async function refreshUserUsageSummary(payload: {
+  start_date?: string
+  end_date?: string
+  mode: 'missing' | 'today' | 'force'
+}) {
+  const res = await api.post<{
+    success: boolean
+    message?: string
+    data: UserUsageRefreshResult
+  }>('/api/usage/summary/refresh', payload)
+  return res.data
+}
+
+export function buildUserUsageSummaryExportUrl(params: {
+  start_date: string
+  end_date: string
+  username?: string
+}) {
+  const search = new URLSearchParams()
+  search.set('start_date', params.start_date)
+  search.set('end_date', params.end_date)
+  if (params.username) search.set('username', params.username)
+  return `/api/usage/summary/export?${search.toString()}`
 }

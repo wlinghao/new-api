@@ -281,6 +281,11 @@ func SetApiRouter(router *gin.Engine) {
 		usageRoute := apiRouter.Group("/usage")
 		usageRoute.Use(middleware.CORS(), middleware.CriticalRateLimit())
 		{
+			usageRoute.GET("/summary", middleware.AdminAuth(), controller.GetUserUsageSummary)
+			usageRoute.GET("/summary/export", middleware.AdminAuth(), controller.ExportUserUsageSummaryCSV)
+			usageRoute.GET("/summary/users/:user_id/models", middleware.AdminAuth(), controller.GetUserUsageModelSummary)
+			usageRoute.POST("/summary/refresh", middleware.AdminAuth(), controller.RefreshUserUsageDaily)
+
 			tokenUsageRoute := usageRoute.Group("/token")
 			tokenUsageRoute.Use(middleware.TokenAuthReadOnly())
 			{
